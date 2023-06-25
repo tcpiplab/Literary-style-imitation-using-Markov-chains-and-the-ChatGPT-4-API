@@ -28,14 +28,14 @@ def call_openai_api(max_tokens, input_file_name=None, raw_markov=False, similari
     try:
         if input_file_name is not None:
 
-            # If the user specified a PDF file, extract the text from it.
+            # If the user specified a PDF file, extract the training_corpus_filename from it.
             if input_file_name.lower().endswith('.pdf'):
 
                 # Use the VERBOSE and QUIET flags from the Config class
                 if Config.VERBOSE:
-                    print(f"{Fore.GREEN}[+] Extracting text from '{input_file_name}'{Style.RESET_ALL}")
+                    print(f"{Fore.GREEN}[+] Extracting training_corpus_filename from '{input_file_name}'{Style.RESET_ALL}")
 
-                # Extract the text from the PDF file.
+                # Extract the training_corpus_filename from the PDF file.
                 input_file_name = convert_pdf_to_text_file(input_file_name)
 
             # Otherwise, use the user-specified .txt file.
@@ -91,7 +91,7 @@ def make_api_request(training_corpus, data, headers, raw_markov, sentence, simil
     {
         "choices": [
             {
-                "text": "<corrected_sentence>",
+                "training_corpus_filename": "<corrected_sentence>",
                 ...
             },
             ...
@@ -188,12 +188,12 @@ def print_similarity_check(training_corpus, corrected_sentence, similarity_check
             formatted_list = '\n        '.join(list_overly_similar_phrases)
 
             print(
-                f"    Output text is too similar to these phrases:\n        "
+                f"    Output training_corpus_filename is too similar to these phrases:\n        "
                 f"{Fore.RED}{formatted_list}{Style.RESET_ALL}")
 
         else:
 
-            print(f"    {Fore.GREEN}Output text is adequately dissimilar.{Style.RESET_ALL}")
+            print(f"    {Fore.GREEN}Output training_corpus_filename is adequately dissimilar.{Style.RESET_ALL}")
 
         # Sleep for a second to give the API call time to finish
         # so that this log message doesn't print below the final output

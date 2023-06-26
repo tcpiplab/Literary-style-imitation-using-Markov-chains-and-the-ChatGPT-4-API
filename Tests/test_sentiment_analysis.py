@@ -1,4 +1,4 @@
-from graph_utilities import display_sentiment_score
+from graph_utilities import display_polarity_graph
 from sentiment_utilities import analyze_sentiment_of_string, analyze_sentiment_by_sentence
 from text_utilities import TextGenerator
 import config
@@ -41,4 +41,4 @@ corpus_string = TextGenerator.return_corpus_text(config.Config.TRAINING_CORPUS)
 
 average_polarity = analyze_sentiment_by_sentence(corpus_string)
 
-display_sentiment_score(average_polarity)
+display_polarity_graph(average_polarity)

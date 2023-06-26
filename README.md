@@ -17,6 +17,13 @@ After checking my GPS coordinates, an indefinable feeling of despair came over m
 
 ![similarity-check2.png](images%2Fsimilarity-check2.png)
 
+## Sentiment analysis of the training text using `--sentiment`
+
+Below is an example of [doing sentiment analysis using the TextBlob library](https://textblob.readthedocs.io/en/dev/quickstart.html#sentiment-analysis). Ironically, this 
+might be the first time anyone has called Heart of Darkness "somewhat positive".
+
+![sentiment.png](images%2Fsentiment.png)
+
 # About
 
 This program can be thought of as a "literary style imitation algorithm" because the primary purpose is to mimic the style and tone of the original text. It creates new content based on the input text rather than directly copying existing content.
@@ -117,6 +124,7 @@ options:
                         repetition(optional)
   -temp TEMPERATURE, --temperature TEMPERATURE
                         Specify the AI temperature (creativity). Float between 0 and 2.0.
+  --sentiment           Perform sentiment analysis on input data.
 ```
 
 # Signing up for a ChatGPT-4 API key

@@ -27,8 +27,13 @@ def analyze_sentiment(training_corpus_filename):
 
     average_polarity, average_subjectivity = analyze_sentiment_by_sentence(corpus_string)
 
+    # Gather mnemonic sentiment phrases for polarity and subjectivity
+    polarity_phrase = interpret_sentiment_polarity(average_polarity)
+    subjectivity_phrase = interpret_sentiment_subjectivity(average_subjectivity)
+
     print("[" + Fore.YELLOW + "SENTIMENT ANALYSIS" + Style.RESET_ALL + "]")
-    print(f"    Training Corpus: {Fore.LIGHTGREEN_EX}{training_corpus_filename:>43}{Style.RESET_ALL}\n"
+    print(f"    The training corpus {Fore.LIGHTGREEN_EX}{training_corpus_filename}{Style.RESET_ALL}"
+          f" is {polarity_phrase} and {subjectivity_phrase}.\n"
           f"    Sentiment Polarity: {Fore.LIGHTBLUE_EX}{average_polarity:>10.4f}{Style.RESET_ALL}", end="      ")
 
     display_polarity_graph(average_polarity)
@@ -36,7 +41,6 @@ def analyze_sentiment(training_corpus_filename):
     print(f"    Sentiment Subjectivity: {Fore.LIGHTBLUE_EX}{average_subjectivity:.4f}{Style.RESET_ALL}", end="       ")
 
     display_subjectivity_graph(average_subjectivity)
-
 
     return average_polarity
 
@@ -65,7 +69,7 @@ def analyze_sentiment_of_string(text_string):
     sentiment_polarity: float = analysis.sentiment.polarity
 
     # Interpret the sentiment based on the polarity score
-    sentiment = interpret_sentiment(sentiment_polarity)
+    sentiment = interpret_sentiment_polarity(sentiment_polarity)
 
     # Print the sentiment and its polarity score
     print(f"Sentiment: {sentiment} (Polarity Score: {sentiment_polarity})")
@@ -127,7 +131,7 @@ def analyze_sentiment_by_sentence(corpus_as_string):
     return (average_sentiment_polarity,  average_subjectivity)
 
 
-def interpret_sentiment(sentiment_polarity):
+def interpret_sentiment_polarity(sentiment_polarity):
     """
     Interpret the sentiment based on the polarity score.
 
@@ -144,13 +148,42 @@ def interpret_sentiment(sentiment_polarity):
     """
 
     if sentiment_polarity > 0.5:
-        sentiment = "Positive"
+        sentiment = "positive"
     elif 0 < sentiment_polarity <= 0.5:
-        sentiment = "Somewhat Positive"
+        sentiment = "somewhat positive"
     elif 0 > sentiment_polarity >= -0.5:
-        sentiment = "Somewhat Negative"
+        sentiment = "somewhat negative"
     elif sentiment_polarity < -0.5:
-        sentiment = "Negative"
+        sentiment = "negative"
     else:
-        sentiment = "Neutral"
+        sentiment = "emotionally neutral"
+    return sentiment
+
+
+def interpret_sentiment_subjectivity(sentiment_subjectivity):
+    """
+    Interpret the sentiment based on the subjectivity score.
+
+    Subjectivity typically ranges from 0 (very objective) to 1 (very subjective).
+    This function adds granularity by distinguishing somewhat subjective and somewhat
+    objective values.
+
+    Parameters:
+        sentiment_subjectivity (float): A sentiment subjectivity score from 0 to 1.
+
+    Returns:
+        str: The interpreted sentiment which can be 'Subjective', 'Somewhat Subjective',
+    'Neutral', 'Somewhat Objective', or 'Objective'.
+    """
+
+    if sentiment_subjectivity > 0.7:
+        sentiment = "subjective"
+    elif 0.5 < sentiment_subjectivity <= 0.7:
+        sentiment = "somewhat subjective"
+    elif 0.3 < sentiment_subjectivity <= 0.5:
+        sentiment = "has balanced subjectivity"
+    elif 0 < sentiment_subjectivity <= 0.3:
+        sentiment = "somewhat objective"
+    else:
+        sentiment = "objective"
     return sentiment

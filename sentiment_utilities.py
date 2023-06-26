@@ -2,7 +2,7 @@ from textblob import TextBlob
 from text_utilities import TextGenerator
 from colorama import Fore, Style
 from config import Config
-from graph_utilities import display_sentiment_score
+from graph_utilities import display_polarity_graph, display_subjectivity_graph
 
 
 def analyze_sentiment(training_corpus_filename):
@@ -29,10 +29,14 @@ def analyze_sentiment(training_corpus_filename):
 
     print("[" + Fore.YELLOW + "SENTIMENT ANALYSIS" + Style.RESET_ALL + "]")
     print(f"    Training Corpus: {Fore.LIGHTGREEN_EX}{training_corpus_filename:>43}{Style.RESET_ALL}\n"
-          f"    Sentiment Polarity: {Fore.LIGHTBLUE_EX}{average_polarity:>10.4f}{Style.RESET_ALL}\n"
-          f"    Sentiment Subjectivity: {Fore.LIGHTBLUE_EX}{average_subjectivity:.4f}{Style.RESET_ALL}")
+          f"    Sentiment Polarity: {Fore.LIGHTBLUE_EX}{average_polarity:>10.4f}{Style.RESET_ALL}", end="      ")
 
-    display_sentiment_score(average_polarity)
+    display_polarity_graph(average_polarity)
+
+    print(f"    Sentiment Subjectivity: {Fore.LIGHTBLUE_EX}{average_subjectivity:.4f}{Style.RESET_ALL}", end="       ")
+
+    display_subjectivity_graph(average_subjectivity)
+
 
     return average_polarity
 
@@ -68,7 +72,7 @@ def analyze_sentiment_of_string(text_string):
 
     # TODO: Distinguish between sentiment of corpus and output text
     # Display the sentiment score graphically
-    display_sentiment_score(sentiment_polarity)
+    display_polarity_graph(sentiment_polarity)
 
     return sentiment_polarity
 

@@ -2,7 +2,7 @@ import os
 import shutil
 
 
-def display_sentiment_score(sentiment_polarity):
+def display_polarity_graph(sentiment_polarity):
     """
     Display the sentiment polarity as a horizontal bar in the terminal.
 
@@ -20,7 +20,9 @@ def display_sentiment_score(sentiment_polarity):
     """
 
     # Get terminal width and subtract 14 for padding on each side
-    bar_width = (get_terminal_width() - 14)
+    # bar_width = (get_terminal_width() - 14)
+
+    bar_width = 30
 
     # Scale value to fit the bar width
     scaled_value = int((sentiment_polarity + 1) / 2 * bar_width)
@@ -28,8 +30,38 @@ def display_sentiment_score(sentiment_polarity):
     # Build bar string using Unicode characters
     bar = '|' + '█' * scaled_value + '░' * (bar_width - scaled_value) + '|'
 
-    print(f"Sentiment Polarity: {sentiment_polarity:.4f}")
-    print(f"{-1 :<5} {bar} {1 :>5}")
+    # print(f"Sentiment Polarity: {sentiment_polarity:.4f}")
+    print(f"{-1 :<0} {bar} {1 :>0}")
+
+
+def display_subjectivity_graph(sentiment_subjectivity):
+    """
+    Display the sentiment subjectivity as a horizontal bar in the terminal.
+
+    The function scales the sentiment subjectivity to fit within the width of the terminal,
+    with some padding on either side. It then constructs a string representing a horizontal
+    bar, with filled '█' characters representing the scaled subjectivity, and empty '░' characters
+    filling in the rest of the bar. It then prints this bar to the terminal, along with the original
+    sentiment subjectivity value.
+
+    Parameters:
+        sentiment_subjectivity (float): The sentiment subjectivity to display, expected to be between 0 and 1.
+
+    Returns:
+        None
+    """
+
+    bar_width = 30
+
+    # Scale value to fit the bar width
+    scaled_value = int(sentiment_subjectivity * bar_width)
+
+    # Build bar string using Unicode characters
+    bar = '|' + '█' * scaled_value + '░' * (bar_width - scaled_value) + '|'
+
+    # print(f"Sentiment Subjectivity: {sentiment_subjectivity:.4f}")
+    print(f"{0 :<0} {bar} {1 :>0}")
+
 
 
 def get_terminal_width():

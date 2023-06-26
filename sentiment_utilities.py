@@ -25,9 +25,12 @@ def analyze_sentiment(training_corpus_filename):
     # Convert the corpus text to a string and pass it to TextBlob
     corpus_string = TextGenerator.return_corpus_text(training_corpus_filename)
 
-    average_polarity = analyze_sentiment_by_sentence(corpus_string)
+    average_polarity, average_subjectivity = analyze_sentiment_by_sentence(corpus_string)
 
-    print(f"{Fore.GREEN}[+] Sentiment analysis of {training_corpus_filename}: {average_polarity:.4f}{Style.RESET_ALL}")
+    print("[" + Fore.YELLOW + "SENTIMENT ANALYSIS" + Style.RESET_ALL + "]")
+    print(f"    Training Corpus: {Fore.LIGHTGREEN_EX}{training_corpus_filename:>43}{Style.RESET_ALL}\n"
+          f"    Sentiment Polarity: {Fore.LIGHTBLUE_EX}{average_polarity:>10.4f}{Style.RESET_ALL}\n"
+          f"    Sentiment Subjectivity: {Fore.LIGHTBLUE_EX}{average_subjectivity:.4f}{Style.RESET_ALL}")
 
     display_sentiment_score(average_polarity)
 
@@ -92,24 +95,32 @@ def analyze_sentiment_by_sentence(corpus_as_string):
     # Split the text into sentences
     sentences = analysis.sentences
 
-    # Initialize a variable to keep track of total sentiment polarity
+    # Initialize variables to keep track of total sentiment polarity and subjectivity
     total_sentiment_polarity = 0
+    total_subjectivity = 0
 
     # Loop through each sentence in the text
     for i, sentence in enumerate(sentences):
+
         # Get the sentiment polarity of the sentence
         sentiment_polarity = sentence.sentiment.polarity
 
         # Add the sentiment polarity of the sentence to the total sentiment polarity
         total_sentiment_polarity += sentiment_polarity
 
-        # Interpret and print the sentiment based on the polarity
-        # print(interpret_sentiment(sentiment_polarity))
+        # Get the subjectivity of the sentence
+        subjectivity = sentence.sentiment.subjectivity
+
+        # Add the subjectivity of the sentence to the total subjectivity
+        total_subjectivity += subjectivity
 
     # Calculate the average sentiment polarity
     average_sentiment_polarity = total_sentiment_polarity / len(sentences)
 
-    return average_sentiment_polarity
+    # Calculate the average subjectivity
+    average_subjectivity = total_subjectivity / len(sentences)
+
+    return (average_sentiment_polarity,  average_subjectivity)
 
 
 def interpret_sentiment(sentiment_polarity):

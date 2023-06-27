@@ -130,7 +130,6 @@ def main():
         if args.sentiment:
             Config.SENTIMENT = True
 
-            # TODO: Fix bug where sentiment analysis always uses the default training_corpus_filename
             sentiment_utilities.analyze_sentiment(Config.TRAINING_CORPUS)
 
         call_openai_api(Config.MAX_TOKENS, None, args.raw_markov, args.similarity_check, args.seed_words)

@@ -22,7 +22,7 @@ logger = configure_logger(__name__)
 init(autoreset=True)
 
 
-def call_openai_api(max_tokens, input_file_name=None, raw_markov=False, similarity_check=False, seed_words=None):
+def call_openai_api(max_tokens, input_file_name=None, raw_markov=False, similarity_check=False, seed_words=None, no_chat_gpt=False):
 
     # If the user specified a training corpus, use that. Otherwise, use the default.
     try:
@@ -72,33 +72,36 @@ def call_openai_api(max_tokens, input_file_name=None, raw_markov=False, similari
 
     print_verbose_api_request(data) if Config.VERBOSE else None
 
-    make_api_request(input_file_name, data, headers, raw_markov, sentence, similarity_check)
+    if no_chat_gpt is False:
+
+        # Send the API request
+        make_api_request(input_file_name, data, headers, raw_markov, sentence, similarity_check, no_chat_gpt=False)
+
+    elif no_chat_gpt is True:
+
+        dont_make_api_request(input_file_name, data, headers, raw_markov, sentence, similarity_check, no_chat_gpt=True)
 
 
-def make_api_request(training_corpus, data, headers, raw_markov, sentence, similarity_check):
+def make_api_request(training_corpus, data, headers, raw_markov, sentence, similarity_check, no_chat_gpt):
     """
     Sends a POST request to the OpenAI API, processes the response and prints various outputs and analysis.
 
     Args:
-    training_corpus (list): A corpus used for training.
-    data (dict): The request payload containing prompt and other parameters.
-    headers (dict): The request headers containing API key.
-    raw_markov (bool): If True, prints raw Markov chain generated input.
-    sentence (str): The input sentence on which completion will be performed.
-    similarity_check (bool): If True, performs and prints similarity analysis of the output with the given corpus.
+        training_corpus (list): A corpus used for training.
+        data (dict): The request payload containing prompt and other parameters.
+        headers (dict): The request headers containing API key.
+        raw_markov (bool): If True, prints raw Markov chain generated input.
+        sentence (str): The input sentence on which completion will be performed.
+        similarity_check (bool): If True, performs and prints similarity analysis of the output with the given corpus.
 
     Response JSON structure:
-    {
-        "choices": [
-            {
-                "training_corpus_filename": "<corrected_sentence>",
-                ...
-            },
-            ...
-        ],
-        ...
-    }
-
+        {
+            "choices": [
+                {
+                    "training_corpus_filename": "<corrected_sentence>",...
+                },...
+            ],...
+        }
     """
     response = requests.post("https://api.openai.com/v1/completions", headers=headers, json=data)
     if response.status_code == 200:
@@ -117,9 +120,10 @@ def make_api_request(training_corpus, data, headers, raw_markov, sentence, simil
 
             corrected_sentence = response.json().get("choices", [{}])[0].get("text", "").strip()
 
-        print_similarity_check(training_corpus, corrected_sentence, similarity_check)
+        # This will only run the similarity check if the user asked for it via --similarity-check
+        print_similarity_check(training_corpus, corrected_sentence, similarity_check, no_chat_gpt=False)
 
-        print_corrected_sentence(corrected_sentence, raw_markov, response, sentence)
+        print_corrected_sentence(corrected_sentence, raw_markov, response, sentence, no_chat_gpt=False)
     else:
 
         if response.status_code == 429:
@@ -129,10 +133,47 @@ def make_api_request(training_corpus, data, headers, raw_markov, sentence, simil
         logger.error(f"Response: {response.text}")
 
 
-def print_corrected_sentence(corrected_sentence, raw_markov, response, sentence):
-    if corrected_sentence:
+def dont_make_api_request(training_corpus, data, headers, raw_markov, sentence, similarity_check, no_chat_gpt):
+    """
+    Instead of sending a POST request to the OpenAI API, it prints various expected outputs and error messages.
 
-        if raw_markov:
+    Args:
+        training_corpus (list): A corpus used for training.
+        data (dict): The expected request payload containing prompt and other parameters.
+        headers (dict): The expected request headers containing API key.
+        raw_markov (bool): If True, prints raw Markov chain generated input.
+        sentence (str): The input sentence on which completion would be performed.
+        similarity_check (bool): If True, performs and prints similarity analysis of the output with the given corpus.
+    """
+
+    corrected_sentences_list = []
+    corrected_sentence = None
+
+    # Loop through and grab each expected response if Config.NUM_OF_RESPONSES > 1
+    if Config.NUM_OF_RESPONSES > 1:
+        for i in range(Config.NUM_OF_RESPONSES):
+            corrected_sentences_list.append("Expected response text...")  # Expected response text
+
+            corrected_sentence = corrected_sentence + corrected_sentences_list[i] + "\n\n"
+
+    else:
+        # Expected response text is None because we didn't call the API
+        corrected_sentence = ""
+
+    print_similarity_check(training_corpus, corrected_sentence, similarity_check, no_chat_gpt=True)
+
+    print_corrected_sentence(corrected_sentence, raw_markov, "Expected response...", sentence, no_chat_gpt=True)  # Expected response instead of actual response
+
+    # Uncomment the lines below if you want to print error messages
+    # logger.error("Error: Too many requests. Please try again later.")
+    # logger.error(f"Error: API call failed with status code {429}.")
+    # logger.error(f"Response: {'Expected error response...'}")  # Expected error response
+
+
+def print_corrected_sentence(corrected_sentence, raw_markov, response, sentence, no_chat_gpt):
+    if corrected_sentence is not None:
+
+        if raw_markov is True or no_chat_gpt is True:
             print(f"[{Fore.YELLOW}RAW MARKOV{Style.RESET_ALL}]\n'{sentence}'\n")
 
         # TODO: Strip off surrounding quotes if present. They are intermittently present in the response
@@ -156,8 +197,8 @@ def print_corrected_sentence(corrected_sentence, raw_markov, response, sentence)
         logger.error("Error: Could not extract the corrected sentence.")
 
 
-def print_similarity_check(training_corpus, corrected_sentence, similarity_check):
-    if similarity_check:
+def print_similarity_check(training_corpus, corrected_sentence, similarity_check, no_chat_gpt):
+    if similarity_check and no_chat_gpt is False:
 
         # TODO: How to pass reference without calling this again?
         input_text = text_generator.return_corpus_text(training_corpus)
@@ -198,6 +239,10 @@ def print_similarity_check(training_corpus, corrected_sentence, similarity_check
         # Sleep for a second to give the API call time to finish
         # so that this log message doesn't print below the final output
         time.sleep(1)
+
+    elif similarity_check is True and no_chat_gpt is True:
+
+        print(f"{Fore.YELLOW}[!] Similarity analysis is not possible when --no-chat-gpt is specified.{Style.RESET_ALL}")
 
 
 def print_verbose_api_request(data):

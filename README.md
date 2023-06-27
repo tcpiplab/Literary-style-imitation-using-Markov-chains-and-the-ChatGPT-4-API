@@ -125,6 +125,8 @@ options:
   -temp TEMPERATURE, --temperature TEMPERATURE
                         Specify the AI temperature (creativity). Float between 0 and 2.0.
   --sentiment           Perform sentiment analysis on input data.
+  -nc, --no-chat-gpt    Do not call the ChatGPT API. Print the raw Markov result instead. (optional)
+
 ```
 
 # Signing up for a ChatGPT-4 API key

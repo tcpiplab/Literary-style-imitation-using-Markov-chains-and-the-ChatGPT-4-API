@@ -56,7 +56,9 @@ def parse_args():
                                                        "Float between 0 and 2.0 (optional)")
     parser.add_argument('--sentiment', action='store_true', help="Perform sentiment analysis on input data.")
 
-    # TODO: Create a command line option to not call the ChatGPT API
+    parser.add_argument("-nc", "--no-chat-gpt",
+                        action="store_true",
+                        help="Do not call the ChatGPT API. Print the raw Markov result instead. (optional)")
 
     # TODO: Add an optional test argument to test the API call
     # parser.add_argument("-t", "--test", action="store_true", help="Test the API call")
@@ -132,7 +134,7 @@ def main():
 
             sentiment_utilities.analyze_sentiment(Config.TRAINING_CORPUS)
 
-        call_openai_api(Config.MAX_TOKENS, None, args.raw_markov, args.similarity_check, args.seed_words)
+        call_openai_api(Config.MAX_TOKENS, None, args.raw_markov, args.similarity_check, args.seed_words, args.no_chat_gpt)
 
     else:
         # If  the user specified a sentiment analysis, update the config and perform sentiment analysis
@@ -141,7 +143,7 @@ def main():
 
             sentiment_utilities.analyze_sentiment(args.input_file)
 
-        call_openai_api(Config.MAX_TOKENS, args.input_file, args.raw_markov, args.similarity_check, args.seed_words)
+        call_openai_api(Config.MAX_TOKENS, args.input_file, args.raw_markov, args.similarity_check, args.seed_words, args.no_chat_gpt)
 
 if __name__ == "__main__":
     main()

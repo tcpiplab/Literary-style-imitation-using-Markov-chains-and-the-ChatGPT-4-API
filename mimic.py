@@ -17,7 +17,8 @@ def parse_args():
     parser.add_argument("-i", "--input-file",
                         help="Path to the input file. .txt or .pdf (optional)",
                         default=Config.TRAINING_CORPUS)
-    # TODO: Create a command line option to specify a directory containing several related training_corpus_filename files.
+    # TODO: Create a command line option to specify a directory containing several related training_corpus_filename
+    #  files.
     parser.add_argument("-r", "--raw-markov",
                         action="store_true",
                         help="Print the raw Markov result (optional)")
@@ -26,7 +27,8 @@ def parse_args():
                         help="Quantify how similar the output is to the original training_corpus_filename (optional)")
     parser.add_argument("-sw", "--seed-words",
                         help="Word(s) to seed the Markov search. "
-                             "If not found in the original training_corpus_filename, it will be prepended to the output. (optional)",
+                             "If not found in the original training_corpus_filename, it will be prepended to the "
+                             "output. (optional)",
                         default=None)
     parser.add_argument("-v", "--verbose",
                         action="store_true",
@@ -134,7 +136,8 @@ def main():
 
             sentiment_utilities.analyze_sentiment(Config.TRAINING_CORPUS)
 
-        call_openai_api(Config.MAX_TOKENS, None, args.raw_markov, args.similarity_check, args.seed_words, args.no_chat_gpt)
+        call_openai_api(Config.MAX_TOKENS, None, args.raw_markov, args.similarity_check, args.seed_words,
+                        args.no_chat_gpt)
 
     else:
         # If  the user specified a sentiment analysis, update the config and perform sentiment analysis
@@ -143,7 +146,9 @@ def main():
 
             sentiment_utilities.analyze_sentiment(args.input_file)
 
-        call_openai_api(Config.MAX_TOKENS, args.input_file, args.raw_markov, args.similarity_check, args.seed_words, args.no_chat_gpt)
+        call_openai_api(Config.MAX_TOKENS, args.input_file, args.raw_markov, args.similarity_check, args.seed_words,
+                        args.no_chat_gpt)
+
 
 if __name__ == "__main__":
     main()

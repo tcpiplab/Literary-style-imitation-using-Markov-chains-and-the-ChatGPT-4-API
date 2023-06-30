@@ -41,22 +41,22 @@ def convert_word_list_to_string(final_output_word_list):
 
 def generate_text(corpus_file_name, prefix_length, output_words_length, seed_words=None):
     """
-    Generate random training_corpus_filename based on the input file content, and given prefix and word lengths.
+    Generate random training corpus based on the input file content, given prefix and word lengths.
 
-    Args:
-      corpus_file_name (str): The path to the input training_corpus_filename file.
-      prefix_length (int): The length of the prefix as a tuple for the transition dictionary.
-      output_words_length (int): The number of words in the generated training_corpus_filename.
+    :param corpus_file_name: The path to the input corpus file.
+    :type corpus_file_name: str
+    :param prefix_length: The length of the prefix as a tuple for the transition dictionary.
+    :type prefix_length: int
+    :param output_words_length: The number of words in the generated corpus.
+    :type output_words_length: int
+    :param seed_words: Word(s) to seed the Markov search and output sentence with.
+    :type seed_words: tuple
 
-    Returns:
-      None
+    :returns: None
 
     Prints:
-      The generated training_corpus_filename based on the provided parameters.
-      :param seed_words:
+        The generated training corpus based on the provided parameters.
     """
-    # with open(corpus_file_name, 'r') as content_file:
-    #     corpus_as_string = content_file.read()
 
     corpus_as_string = return_corpus_text(corpus_file_name)
 
@@ -77,9 +77,9 @@ def generate_text(corpus_file_name, prefix_length, output_words_length, seed_wor
     # and assign a list containing a space as its value. For example, with prefix_length equal to 3,
     # the resulting chain dictionary would look like: {('.', '.', '.'): [' ']}.
     #
-    # This code snippet is typically found in implementations of Markov chain training_corpus_filename generation algorithms, where chain
-    # serves as a transition dictionary. The key-value pair being set here initializes the starting state for the
-    # chain with a predetermined tuple of a specific length (determined by prefix_length).
+    # This code snippet is typically found in implementations of Markov chain training_corpus_filename generation
+    # algorithms, where chain serves as a transition dictionary. The key-value pair being set here initializes the
+    # starting state for the chain with a predetermined tuple of a specific length (determined by prefix_length).
     chain = {tuple(['.'] * prefix_length): [' ']}
 
     # Build the transition dictionary by iterating through the training_corpus_filename in corpus_as_string, extracting
@@ -106,7 +106,7 @@ def generate_text(corpus_file_name, prefix_length, output_words_length, seed_wor
     # Start_seq is used to initialize the Markov chain with a starting state.
     # start_seq = ('was', 'looking')
 
-    start_seq = None
+    # start_seq = None
 
     # If seed_words was provided by the user, use it to initialize the start_seq.
     # Otherwise, initialize start_seq randomly from words in the Markov chain.

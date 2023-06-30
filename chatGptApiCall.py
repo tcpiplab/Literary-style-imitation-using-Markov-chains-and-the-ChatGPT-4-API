@@ -102,6 +102,7 @@ def make_api_request(training_corpus, data, headers, raw_markov, sentence, simil
                 },...
             ],...
         }
+        :param no_chat_gpt:
     """
     response = requests.post("https://api.openai.com/v1/completions", headers=headers, json=data)
     if response.status_code == 200:

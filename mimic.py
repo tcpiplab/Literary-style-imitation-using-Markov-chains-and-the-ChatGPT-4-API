@@ -160,7 +160,7 @@ def main():
 
         if Config.SENTIMENT:
 
-            sentiment_utilities.analyze_sentiment_of_string(corrected_sentence)
+            sentiment_utilities.print_sentiment_analysis_results(corrected_sentence)
 
 if __name__ == "__main__":
     main()

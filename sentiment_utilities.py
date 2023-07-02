@@ -25,16 +25,33 @@ def analyze_sentiment_of_file(training_corpus_filename):
     # Convert the corpus text to a string and pass it to TextBlob
     corpus_string = TextGenerator.return_corpus_text(training_corpus_filename)
 
+    average_polarity = print_sentiment_analysis_results(corpus_string, training_corpus_filename)
+
+    return average_polarity
+
+
+def print_sentiment_analysis_results(corpus_string, training_corpus_filename=None):
+    # This will print the sentiment of the input string and display the sentiment score graphically.
+    # The training corpus filename is optional and will be used to print the sentiment of the input string.
+
     average_polarity, average_subjectivity = analyze_sentiment_by_sentence(corpus_string)
 
     # Gather mnemonic sentiment phrases for polarity and subjectivity
     polarity_phrase = interpret_sentiment_polarity(average_polarity)
+
     subjectivity_phrase = interpret_sentiment_subjectivity(average_subjectivity)
 
     print("[" + Fore.YELLOW + "SENTIMENT ANALYSIS" + Style.RESET_ALL + "]")
-    print(f"    The training corpus {Fore.LIGHTGREEN_EX}{training_corpus_filename}{Style.RESET_ALL}"
-          f" is {polarity_phrase} and {subjectivity_phrase}.\n"
-          f"    Sentiment Polarity: {Fore.LIGHTBLUE_EX}{average_polarity:>10.4f}{Style.RESET_ALL}", end="      ")
+
+    if training_corpus_filename is not None:
+
+        print(f"    The training corpus {Fore.LIGHTGREEN_EX}{training_corpus_filename}{Style.RESET_ALL}"
+              f" is {polarity_phrase} and {subjectivity_phrase}.\n"
+              f"    Sentiment Polarity: {Fore.LIGHTBLUE_EX}{average_polarity:>10.4f}{Style.RESET_ALL}", end="      ")
+
+    elif training_corpus_filename is None:
+        print(f"    The output text is {polarity_phrase} and {subjectivity_phrase}.\n"
+              f"    Sentiment Polarity: {Fore.LIGHTBLUE_EX}{average_polarity:>10.4f}{Style.RESET_ALL}", end="      ")
 
     display_polarity_graph(average_polarity)
 

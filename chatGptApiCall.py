@@ -296,6 +296,6 @@ def setup_api_request(max_tokens, sentence):
         "temperature": Config.TEMPERATURE,
         "max_tokens": max_tokens,
         "n": Config.NUM_OF_RESPONSES,
-}
+    }
 
     return data, headers

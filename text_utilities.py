@@ -134,7 +134,8 @@ class TextGenerator:
             chain[seq].append(corpus_as_string[i + prefix_length] if i + prefix_length < len(corpus_as_string) else '.')
 
         if seed_words is not None:
-            start_seq = tuple(seed_words.split())
+            # start_seq = tuple(seed_words.split())
+            start_seq = seed_words
         else:
             start_seq = random.choice(list(chain.keys()))
         output_word_list = list(start_seq)

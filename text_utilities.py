@@ -17,8 +17,9 @@ class TextGenerator:
         self.logger = configure_logger(__name__)
         init(autoreset=True)
 
-    # This method is used to return the training_corpus_filename from a given corpus file. The corpus file should be in UTF-8 format. But
-    # Combining both the errors='replace' parameter and the try/except block provides more robust error handling for
+    # This method is used to return the training_corpus_filename from a given corpus file.
+    # The corpus file should be in UTF-8 format. But combining both the errors='replace' parameter
+    # and the try/except block provides more robust error handling for
     # various issues that may arise when working with input files.
     @staticmethod
     def return_corpus_text(corpus_file_name):
@@ -104,9 +105,9 @@ class TextGenerator:
             :type corpus_as_string: str
             :param output_words_length: The number of words to generate.
             :type output_words_length: int
-            :param prefix_length: The length of the prefix for the Markov chain, i.e., how many words to look backwards to predict the next word.
+            :param prefix_length: The length of the prefix for the Markov chain to predict the next word.
             :type prefix_length: int
-            :param seed_words: Initial words to seed the Markov chain algorithm. If not provided, the algorithm chooses initial words.
+            :param seed_words: Initial words to seed the Markov chain. Optional.
             :type seed_words: tuple
 
             :returns: A list of words forming the generated text.

@@ -21,8 +21,6 @@ print("Neutral Example:", neutral_text)
 neutral_sentiment_polarity = analyze_sentiment_of_string(neutral_text)
 print("Neutral Example Polarity Score:", neutral_sentiment_polarity)
 
-
-
 # def analyze_sentiment_by_sentence(text):
 #     analysis = TextBlob(text)
 #     sentences = analysis.sentences

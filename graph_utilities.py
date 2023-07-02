@@ -63,7 +63,6 @@ def display_subjectivity_graph(sentiment_subjectivity):
     print(f"{0 :<0} {bar} {1 :>0}")
 
 
-
 def get_terminal_width():
     """
     Get the width of the terminal in characters.

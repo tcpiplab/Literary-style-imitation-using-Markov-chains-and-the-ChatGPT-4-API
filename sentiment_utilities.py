@@ -128,7 +128,7 @@ def analyze_sentiment_by_sentence(corpus_as_string):
     # Calculate the average subjectivity
     average_subjectivity = total_subjectivity / len(sentences)
 
-    return (average_sentiment_polarity,  average_subjectivity)
+    return average_sentiment_polarity,  average_subjectivity
 
 
 def interpret_sentiment_polarity(sentiment_polarity):

@@ -134,21 +134,33 @@ def main():
         if args.sentiment:
             Config.SENTIMENT = True
 
-            sentiment_utilities.analyze_sentiment(Config.TRAINING_CORPUS)
+            print("Performing sentiment analysis on the training_corpus_filename...")
+            sentiment_utilities.analyze_sentiment_of_file(Config.TRAINING_CORPUS)
 
-        call_openai_api(Config.MAX_TOKENS, None, args.raw_markov, args.similarity_check, args.seed_words,
-                        args.no_chat_gpt)
+        corrected_sentence = call_openai_api(Config.MAX_TOKENS,
+                                                 None,
+                                                 args.raw_markov,
+                                                 args.similarity_check,
+                                                 args.seed_words,
+                                                 args.no_chat_gpt)
+        print(f">>>> {corrected_sentence}")
+        # if Config.SENTIMENT:
+
+            # sentiment_utilities.analyze_sentiment(corrected_sentence)
 
     else:
         # If  the user specified a sentiment analysis, update the config and perform sentiment analysis
         if args.sentiment:
             Config.SENTIMENT = True
 
-            sentiment_utilities.analyze_sentiment(args.input_file)
+            sentiment_utilities.analyze_sentiment_of_file(args.input_file)
 
-        call_openai_api(Config.MAX_TOKENS, args.input_file, args.raw_markov, args.similarity_check, args.seed_words,
+        corrected_sentence = call_openai_api(Config.MAX_TOKENS, args.input_file, args.raw_markov, args.similarity_check, args.seed_words,
                         args.no_chat_gpt)
 
+        if Config.SENTIMENT:
+
+            sentiment_utilities.analyze_sentiment_of_string(corrected_sentence)
 
 if __name__ == "__main__":
     main()

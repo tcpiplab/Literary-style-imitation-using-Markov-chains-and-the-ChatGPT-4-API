@@ -5,7 +5,7 @@ from config import Config
 from graph_utilities import display_polarity_graph, display_subjectivity_graph
 
 
-def analyze_sentiment(training_corpus_filename):
+def analyze_sentiment_of_file(training_corpus_filename):
     """
     Analyzes the sentiment of the given text using TextBlob and returns a sentiment polarity score.
 

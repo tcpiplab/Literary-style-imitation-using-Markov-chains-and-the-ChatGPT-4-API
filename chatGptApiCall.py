@@ -77,16 +77,18 @@ def call_openai_api(max_tokens,
 
     print_verbose_api_request(data) if Config.VERBOSE else None
 
+    corrected_sentence = ""
+
     if no_chat_gpt is False:
 
         # Send the API request
-        make_api_request(input_file_name, data, headers, raw_markov, sentence, similarity_check)
+        corrected_sentence = make_api_request(input_file_name, data, headers, raw_markov, sentence, similarity_check)
 
     elif no_chat_gpt is True:
 
         dont_make_api_request(input_file_name, raw_markov, sentence, similarity_check)
 
-    return
+    return corrected_sentence
 
 
 def make_api_request(training_corpus, data, headers, raw_markov, sentence, similarity_check):
@@ -145,6 +147,7 @@ def make_api_request(training_corpus, data, headers, raw_markov, sentence, simil
         logger.error(f"Error: API call failed with status code {response.status_code}.")
         logger.error(f"Response: {response.text}")
 
+    return corrected_sentence
 
 def dont_make_api_request(training_corpus, raw_markov, sentence, similarity_check):
     """

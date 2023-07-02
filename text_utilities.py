@@ -156,6 +156,7 @@ class TextGenerator:
 
             current_seq = tuple((list(current_seq) + [next_word])[1:])
             output_word_list.append(next_word)
+
         return output_word_list
 
     @staticmethod
@@ -171,7 +172,7 @@ class TextGenerator:
         :type corpus_as_string: str
 
         :returns: The cleaned up corpus as a list of words.
-        :rtype: list
+        :rtype: str
         """
         corpus_as_string = corpus_as_string.lower()
         for char in ["!", ".", ",", "@", "&", "?", "-"]:

@@ -19,10 +19,9 @@ After checking my GPS coordinates, an indefinable feeling of despair came over m
 
 ## Sentiment analysis of the training text using `--sentiment`
 
-Below is an example of [doing sentiment analysis using the TextBlob library](https://textblob.readthedocs.io/en/dev/quickstart.html#sentiment-analysis). Ironically, this 
-might be the first time anyone has called Heart of Darkness "somewhat positive".
+Below is an example of [doing sentiment analysis using the TextBlob library](https://textblob.readthedocs.io/en/dev/quickstart.html#sentiment-analysis).
 
-![sentiment.png](images%2Fsentiment.png)
+![sentiment-in-out.png](images%2Fsentiment-in-out.png)
 
 # About
 

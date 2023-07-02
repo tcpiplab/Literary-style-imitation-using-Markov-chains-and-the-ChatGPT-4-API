@@ -30,14 +30,15 @@ def extract_pdf_text(pdf_file_path):
 
 def convert_pdf_to_text_file(pdf_file_path):
     """
-    Extracts training_corpus_filename from a given PDF file, saves the extracted training_corpus_filename to a new training_corpus_filename file,
+    Extracts training_corpus_filename from a given PDF file, saves the extracted
+    training_corpus_filename to a new training_corpus_filename file,
     and returns the path to the newly created training_corpus_filename file.
 
     Args:
         pdf_file_path (str): The path of the PDF file to be converted to training_corpus_filename.
 
     Returns:
-        str: The path of the new training_corpus_filename file containing the extracted training_corpus_filename from the PDF.
+        str: The path of the new training_corpus_filename file containing the extracted text from the PDF.
 
     Raises:
         Exception: Any exceptions raised during training_corpus_filename extraction or file writing will propagate.

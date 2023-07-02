@@ -22,8 +22,12 @@ logger = configure_logger(__name__)
 init(autoreset=True)
 
 
-def call_openai_api(max_tokens, input_file_name=None, raw_markov=False, similarity_check=False, seed_words=None, no_chat_gpt=False):
-
+def call_openai_api(max_tokens,
+                    input_file_name=None,
+                    raw_markov=False,
+                    similarity_check=False,
+                    seed_words=None,
+                    no_chat_gpt=False):
     # If the user specified a training corpus, use that. Otherwise, use the default.
     try:
         if input_file_name is not None:
@@ -33,7 +37,8 @@ def call_openai_api(max_tokens, input_file_name=None, raw_markov=False, similari
 
                 # Use the VERBOSE and QUIET flags from the Config class
                 if Config.VERBOSE:
-                    print(f"{Fore.GREEN}[+] Extracting training_corpus_filename from '{input_file_name}'{Style.RESET_ALL}")
+                    print(f"{Fore.GREEN}[+] Extracting training_corpus_filename "
+                          f"from '{input_file_name}'{Style.RESET_ALL}")
 
                 # Extract the training_corpus_filename from the PDF file.
                 input_file_name = convert_pdf_to_text_file(input_file_name)
@@ -72,17 +77,21 @@ def call_openai_api(max_tokens, input_file_name=None, raw_markov=False, similari
 
     print_verbose_api_request(data) if Config.VERBOSE else None
 
+    corrected_sentence = ""
+
     if no_chat_gpt is False:
 
         # Send the API request
-        make_api_request(input_file_name, data, headers, raw_markov, sentence, similarity_check, no_chat_gpt=False)
+        corrected_sentence = make_api_request(input_file_name, data, headers, raw_markov, sentence, similarity_check)
 
     elif no_chat_gpt is True:
 
-        dont_make_api_request(input_file_name, data, headers, raw_markov, sentence, similarity_check, no_chat_gpt=True)
+        dont_make_api_request(input_file_name, raw_markov, sentence, similarity_check)
+
+    return corrected_sentence
 
 
-def make_api_request(training_corpus, data, headers, raw_markov, sentence, similarity_check, no_chat_gpt):
+def make_api_request(training_corpus, data, headers, raw_markov, sentence, similarity_check):
     """
     Sends a POST request to the OpenAI API, processes the response and prints various outputs and analysis.
 
@@ -102,6 +111,12 @@ def make_api_request(training_corpus, data, headers, raw_markov, sentence, simil
                 },...
             ],...
         }
+        :param similarity_check:
+        :param sentence:
+        :param raw_markov:
+        :param headers:
+        :param data:
+        :param training_corpus:
     """
     response = requests.post("https://api.openai.com/v1/completions", headers=headers, json=data)
     if response.status_code == 200:
@@ -132,15 +147,14 @@ def make_api_request(training_corpus, data, headers, raw_markov, sentence, simil
         logger.error(f"Error: API call failed with status code {response.status_code}.")
         logger.error(f"Response: {response.text}")
 
+    return corrected_sentence
 
-def dont_make_api_request(training_corpus, data, headers, raw_markov, sentence, similarity_check, no_chat_gpt):
+def dont_make_api_request(training_corpus, raw_markov, sentence, similarity_check):
     """
     Instead of sending a POST request to the OpenAI API, it prints various expected outputs and error messages.
 
     Args:
         training_corpus (list): A corpus used for training.
-        data (dict): The expected request payload containing prompt and other parameters.
-        headers (dict): The expected request headers containing API key.
         raw_markov (bool): If True, prints raw Markov chain generated input.
         sentence (str): The input sentence on which completion would be performed.
         similarity_check (bool): If True, performs and prints similarity analysis of the output with the given corpus.
@@ -162,7 +176,11 @@ def dont_make_api_request(training_corpus, data, headers, raw_markov, sentence, 
 
     print_similarity_check(training_corpus, corrected_sentence, similarity_check, no_chat_gpt=True)
 
-    print_corrected_sentence(corrected_sentence, raw_markov, "Expected response...", sentence, no_chat_gpt=True)  # Expected response instead of actual response
+    print_corrected_sentence(corrected_sentence,
+                             raw_markov,
+                             "Expected response...",
+                             sentence,
+                             no_chat_gpt=True)  # Expected response instead of actual response
 
     # Uncomment the lines below if you want to print error messages
     # logger.error("Error: Too many requests. Please try again later.")
@@ -275,11 +293,12 @@ def setup_api_request(max_tokens, sentence):
     }
     data = {
         "model": "text-davinci-003",
-        "prompt": "The following sentence may be missing something: \"" + sentence + "\". "
-        "Please make the sentence make more sense. "
-        "And don't return anything but a single sentence. I only want to see one version of the sentence.",
+        "prompt": f'The following sentence may be missing something: "{sentence}". '
+                  f'Please make the sentence make more sense. '
+                  f'And don\'t return anything but a single sentence. I only want to see one version of the sentence.',
         "temperature": Config.TEMPERATURE,
         "max_tokens": max_tokens,
         "n": Config.NUM_OF_RESPONSES,
     }
+
     return data, headers

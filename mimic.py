@@ -1,5 +1,6 @@
 import argparse
-
+import os
+from transformers import pipeline
 import sentiment_utilities
 from chatGptApiCall import call_openai_api
 from config import Config
@@ -62,6 +63,9 @@ def parse_args():
                         action="store_true",
                         help="Do not call the ChatGPT API. Print the raw Markov result instead. (optional)")
 
+    parser.add_argument('--summarize', action='store_true',
+                        help='Use this flag to summarize the input file')
+
     # TODO: Add an optional test argument to test the API call
     # parser.add_argument("-t", "--test", action="store_true", help="Test the API call")
 
@@ -83,8 +87,46 @@ def clamp(value, min_value, max_value):
     return max(min(value, max_value), min_value)
 
 
+def summarize_text(text, summarizer, max_length=1024):
+    paragraphs = text.split("\n\n")
+
+    summaries = []
+    for paragraph in paragraphs:
+        # Ensure the max_length of the summary is always less than the length of the input
+        paragraph_length = len(paragraph.split())
+        max_length = max(2, min(50, paragraph_length // 2))
+
+        # Ensure min_length is not larger than max_length
+        min_length = min(max_length, max(2, max_length // 2))
+
+        if paragraph_length > min_length:
+            summary = summarizer(paragraph, max_length=max_length, min_length=min_length, do_sample=False)[0]
+            summaries.append(summary['summary_text'])
+
+    return summaries
+
+
 def main():
     args = parse_args()
+
+    if args.input_file and args.summarize:
+        if os.path.exists(args.input_file):
+            print("Summarizing file: ", args.input_file)
+            with open(args.input_file, 'r') as f:
+                corpus_as_string = f.read()
+
+            # summarizer = pipeline('summarization')
+            # Explicitly specify the model to be used for summarization
+            summarizer = pipeline("summarization", model="sshleifer/distilbart-cnn-12-6", device=-1)
+            # summary = summarizer(corpus_as_string, max_length=50, min_length=25, do_sample=False)
+
+            # Replace the summarization line in your main() function with a call to summarize_text()
+            summary = summarize_text(corpus_as_string, summarizer)
+
+            # print(summary[0]['summary_text'])
+            print(summary)
+        else:
+            print(f"No such file: {args.input_file}")
 
     # Update the config based on the parsed arguments
     Config.VERBOSE = args.verbose
@@ -138,29 +180,33 @@ def main():
             sentiment_utilities.analyze_sentiment_of_file(Config.TRAINING_CORPUS)
 
         corrected_sentence = call_openai_api(Config.MAX_TOKENS,
-                                                 None,
-                                                 args.raw_markov,
-                                                 args.similarity_check,
-                                                 args.seed_words,
-                                                 args.no_chat_gpt)
+                                             None,
+                                             args.raw_markov,
+                                             args.similarity_check,
+                                             args.seed_words,
+                                             args.no_chat_gpt)
         print(f">>>> {corrected_sentence}")
         # if Config.SENTIMENT:
 
-            # sentiment_utilities.analyze_sentiment(corrected_sentence)
+        # sentiment_utilities.analyze_sentiment(corrected_sentence)
 
     else:
         # If  the user specified a sentiment analysis, update the config and perform sentiment analysis
         if args.sentiment:
             Config.SENTIMENT = True
 
+            # Sentiment analysis is performed on the input file
             sentiment_utilities.analyze_sentiment_of_file(args.input_file)
 
-        corrected_sentence = call_openai_api(Config.MAX_TOKENS, args.input_file, args.raw_markov, args.similarity_check, args.seed_words,
-                        args.no_chat_gpt)
+        corrected_sentence = call_openai_api(Config.MAX_TOKENS, args.input_file, args.raw_markov, args.similarity_check,
+                                             args.seed_words,
+                                             args.no_chat_gpt)
 
-        if Config.SENTIMENT:
+        if args.sentiment:
 
+            # Perform sentiment analysis on the output sentence
             sentiment_utilities.print_sentiment_analysis_results(corrected_sentence)
+
 
 if __name__ == "__main__":
     main()

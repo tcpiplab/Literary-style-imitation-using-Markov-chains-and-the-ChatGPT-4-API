@@ -103,8 +103,8 @@ def summarize_text(text, summarizer, max_length=1024):
             summary = summarizer(paragraph, max_length=max_length, min_length=min_length, do_sample=False)[0]
             summaries.append(summary['summary_text'])
 
-    return summaries
-
+    # return summaries
+    return '\n'.join(summaries)
 
 def main():
     args = parse_args()
@@ -124,8 +124,15 @@ def main():
             summary = summarize_text(corpus_as_string, summarizer)
 
             # print(summary[0]['summary_text'])
-            print(summary)
+            # print(summary)
+            print("Paragraph-level summaries: ", summary)
+
+            # Create an overall summary
+            overall_summary = summarizer(summary, max_length=50, min_length=25, do_sample=False)
+            print("Overall summary: ", overall_summary[0]['summary_text'])
+
         else:
+
             print(f"No such file: {args.input_file}")
 
     # Update the config based on the parsed arguments

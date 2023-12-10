@@ -2,6 +2,7 @@ import json
 import os
 import time
 import requests
+from openai import OpenAI
 from colorama import init, Fore, Style
 from pygments import highlight
 from pygments.formatters import TerminalFormatter
@@ -149,6 +150,7 @@ def make_api_request(training_corpus, data, headers, raw_markov, sentence, simil
 
     return corrected_sentence
 
+
 def dont_make_api_request(training_corpus, raw_markov, sentence, similarity_check):
     """
     Instead of sending a POST request to the OpenAI API, it prints various expected outputs and error messages.
@@ -292,7 +294,7 @@ def setup_api_request(max_tokens, sentence):
         "Content-Type": "application/json",
     }
     data = {
-        "model": "text-davinci-003",
+        "model": "gpt-3.5-turbo-instruct",
         "prompt": f'The following sentence may be missing something: "{sentence}". '
                   f'Please make the sentence make more sense. '
                   f'And don\'t return anything but a single sentence. I only want to see one version of the sentence.',
@@ -302,3 +304,33 @@ def setup_api_request(max_tokens, sentence):
     }
 
     return data, headers
+
+
+def test_openai_api():
+    """
+    Tests if the user can successfully call the OpenAI API.
+
+    Returns:
+        bool: True if the API call is successful, False otherwise.
+    """
+
+    api_key = os.environ["GPT_API_KEY"]
+    client = OpenAI(api_key=api_key)
+
+    try:
+        # Perform a simple API call.
+        # FYI this is currently testing via the openai module,
+        # whereas the actual mimic.py program calls the API via the Requests module.
+        # Also, we're using the gpt-3.5-turbo-instruct model now because the previous model is deprecated.
+        response = client.completions.create(model="gpt-3.5-turbo-instruct",
+        prompt="Hello, world!",
+        max_tokens=5)
+
+        if response.choices:
+            print(f"{Fore.GREEN}[+] OpenAI API call was successful.{Style.RESET_ALL}")
+            return True
+
+        return False
+    except Exception as e:
+        print(f"{Fore.RED}[-] Error while testing OpenAI API: {Style.RESET_ALL}{str(e)}")
+        return False

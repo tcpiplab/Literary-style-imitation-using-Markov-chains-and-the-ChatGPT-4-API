@@ -294,7 +294,7 @@ def setup_api_request(max_tokens, sentence):
         "Content-Type": "application/json",
     }
     data = {
-        "model": "text-davinci-003",
+        "model": "gpt-3.5-turbo-instruct",
         "prompt": f'The following sentence may be missing something: "{sentence}". '
                   f'Please make the sentence make more sense. '
                   f'And don\'t return anything but a single sentence. I only want to see one version of the sentence.',

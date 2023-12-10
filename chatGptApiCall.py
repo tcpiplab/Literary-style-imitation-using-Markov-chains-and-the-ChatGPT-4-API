@@ -2,7 +2,7 @@ import json
 import os
 import time
 import requests
-import openai
+from openai import OpenAI
 from colorama import init, Fore, Style
 from pygments import highlight
 from pygments.formatters import TerminalFormatter
@@ -313,21 +313,24 @@ def test_openai_api():
     Returns:
         bool: True if the API call is successful, False otherwise.
     """
+
+    api_key = os.environ["GPT_API_KEY"]
+    client = OpenAI(api_key=api_key)
+
     try:
-        api_key = os.environ["GPT_API_KEY"]
-        openai.api_key = api_key
+        # Perform a simple API call.
+        # FYI this is currently testing via the openai module,
+        # whereas the actual mimic.py program calls the API via the Requests module.
+        # Also, we're using the gpt-3.5-turbo-instruct model now because the previous model is deprecated.
+        response = client.completions.create(model="gpt-3.5-turbo-instruct",
+        prompt="Hello, world!",
+        max_tokens=5)
 
-        # Perform a simple API call
-        response = openai.Completion.create(
-            engine="davinci",
-            prompt="Hello, world!",
-            max_tokens=5
-        )
-
-        if response and 'choices' in response:
+        if response.choices:
+            print(f"{Fore.GREEN}[+] OpenAI API call was successful.{Style.RESET_ALL}")
             return True
 
         return False
     except Exception as e:
-        print(f"Error while testing OpenAI API: {str(e)}")
+        print(f"{Fore.RED}[-] Error while testing OpenAI API: {Style.RESET_ALL}{str(e)}")
         return False

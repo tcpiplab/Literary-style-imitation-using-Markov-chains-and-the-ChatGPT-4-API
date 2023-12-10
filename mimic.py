@@ -88,6 +88,33 @@ def clamp(value, min_value, max_value):
 
 
 def summarize_text(text, summarizer, max_length=1024):
+    """
+    Summarizes a given text using a specified summarizer model.
+
+    This function takes a text and splits it into paragraphs based on double line breaks.
+    It then iterates over each paragraph and generates a summary using the provided summarizer model.
+    The length of the summary is determined dynamically based on the length of the paragraph.
+    The generated summaries are stored in a list and returned as a single string joined by newlines.
+
+    Args:
+        text (str): The input text to be summarized.
+        summarizer: The summarizer model or function used to generate the summaries.
+        max_length (int, optional): The maximum length of the summary. Defaults to 1024.
+
+    Returns:
+        str: A string containing the generated summaries joined by newlines.
+
+    Note:
+        The function assumes that the summarizer model or function accepts the following parameters:
+        - paragraph (str): The input paragraph to be summarized.
+        - max_length (int): The maximum length of the summary.
+        - min_length (int): The minimum length of the summary.
+        - do_sample (bool): Whether to use sampling during the summarization process.
+
+    Raises:
+        Any exceptions raised by the underlying summarizer model or function may propagate up to the caller.
+    """
+
     paragraphs = text.split("\n\n")
 
     summaries = []
@@ -105,6 +132,7 @@ def summarize_text(text, summarizer, max_length=1024):
 
     # return summaries
     return '\n'.join(summaries)
+
 
 def main():
     args = parse_args()

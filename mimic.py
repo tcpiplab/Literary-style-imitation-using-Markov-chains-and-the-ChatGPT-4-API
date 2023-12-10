@@ -2,7 +2,7 @@ import argparse
 import os
 from transformers import pipeline
 import sentiment_utilities
-from chatGptApiCall import call_openai_api
+from chatGptApiCall import call_openai_api, test_openai_api
 from config import Config
 from log_config import configure_logger
 
@@ -66,8 +66,8 @@ def parse_args():
     parser.add_argument('--summarize', action='store_true',
                         help='Use this flag to summarize the input file')
 
-    # TODO: Add an optional test argument to test the API call
-    # parser.add_argument("-t", "--test", action="store_true", help="Test the API call")
+    # Add an optional test argument to test the API call
+    parser.add_argument("-t", "--test", action="store_true", help="Test the API call")
 
     return parser.parse_args()
 
@@ -136,6 +136,11 @@ def summarize_text(text, summarizer, max_length=1024):
 
 def main():
     args = parse_args()
+
+    # If the user specified a test argument, call the test_openai_api() function
+    if args.test:
+        test_openai_api()
+        return
 
     if args.input_file and args.summarize:
         if os.path.exists(args.input_file):

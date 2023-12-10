@@ -2,6 +2,7 @@ import json
 import os
 import time
 import requests
+import openai
 from colorama import init, Fore, Style
 from pygments import highlight
 from pygments.formatters import TerminalFormatter
@@ -148,6 +149,7 @@ def make_api_request(training_corpus, data, headers, raw_markov, sentence, simil
         logger.error(f"Response: {response.text}")
 
     return corrected_sentence
+
 
 def dont_make_api_request(training_corpus, raw_markov, sentence, similarity_check):
     """
@@ -302,3 +304,30 @@ def setup_api_request(max_tokens, sentence):
     }
 
     return data, headers
+
+
+def test_openai_api():
+    """
+    Tests if the user can successfully call the OpenAI API.
+
+    Returns:
+        bool: True if the API call is successful, False otherwise.
+    """
+    try:
+        api_key = os.environ["GPT_API_KEY"]
+        openai.api_key = api_key
+
+        # Perform a simple API call
+        response = openai.Completion.create(
+            engine="davinci",
+            prompt="Hello, world!",
+            max_tokens=5
+        )
+
+        if response and 'choices' in response:
+            return True
+
+        return False
+    except Exception as e:
+        print(f"Error while testing OpenAI API: {str(e)}")
+        return False
